@@ -19,8 +19,8 @@ async function decode(inputImage) {
     const image = await jimp.read(inputImage);
     const json = lsb.decode(image.bitmap.data, rgb);
     const message = JSON.parse(json);
-    const s = JSON.stringify(message);
-    return s;
+    // const s = JSON.stringify(message);
+    return message;
   }
   
 
@@ -37,7 +37,12 @@ async function decode(inputImage) {
         const s = await decode(images[x]);
         items.push(s);
       } 
+
+      console.log(items);
+      items.sort((a, b) => a.index - b.index);
+      console.log(items);
      
+
       setSecrets(items);
     }
     
@@ -48,9 +53,9 @@ async function decode(inputImage) {
     const imageTags = 
       images.map(
         i=><img src={i} />,
-      ) 
-    
-    return <h1>{imageTags}, {secrets}</h1>;
+      )
+
+    return <h1>{imageTags}, {secrets.map(s => s.message)}</h1>;
   }
 
   ReactDOM.render(

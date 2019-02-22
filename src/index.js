@@ -5,9 +5,8 @@ import ReactDOM from 'react-dom';
 const jimp = require('jimp');
 const lsb = require('lsb');
 const path = require('path');
-var m;
 
-const images = [
+let images = [
   require('./1.png'),
   require('./2.png'),
   require('./3.png'),
@@ -19,7 +18,6 @@ async function decode(inputImage) {
     const image = await jimp.read(inputImage);
     const json = lsb.decode(image.bitmap.data, rgb);
     const message = JSON.parse(json);
-    // const s = JSON.stringify(message);
     return message;
   }
   
@@ -29,19 +27,18 @@ async function decode(inputImage) {
   }
 
   const MyCmponent = () => {
-    const [secrets, setSecrets] = useState([]);
 
-    const decodeImages = async (image) => {
+    const [secrets, setSecrets] = useState([]);
+    const decodeImages = async () => {
       const items = [];
       for (let x = 0; x < images.length; x++) {
         const s = await decode(images[x]);
+        s.imageindex = x;
+
         items.push(s);
       } 
 
-      console.log(items);
       items.sort((a, b) => a.index - b.index);
-      console.log(items);
-     
 
       setSecrets(items);
     }
@@ -51,10 +48,10 @@ async function decode(inputImage) {
     }, [])
     
     const imageTags = 
-      images.map(
-        i=><img src={i} />,
+      secrets.map(
+        i=><img src={images[i.imageindex]} />,
       )
-
+    
     return <h1>{imageTags}, {secrets.map(s => s.message)}</h1>;
   }
 

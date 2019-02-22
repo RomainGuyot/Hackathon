@@ -15,9 +15,6 @@ const images = [
   require('./5.png')
 ];
 
-const items = [];
-var obj = {}
-
 async function decode(inputImage) {
     const image = await jimp.read(inputImage);
     const json = lsb.decode(image.bitmap.data, rgb);
@@ -35,27 +32,28 @@ async function decode(inputImage) {
     const [secrets, setSecrets] = useState([]);
 
     const decodeImages = async (image) => {
-      const s = await decode(image);
-      items.push(setSecrets([s]));
+      const items = [];
+      for (let x = 0; x < images.length; x++) {
+        const s = await decode(images[x]);
+        items.push(s);
+      } 
+     
+      setSecrets(items);
     }
     
     useEffect(() => {
-      for(var i = 0; i <images.length; i++){
-        decodeImages(images[i]);
-      }
+      decodeImages();
     }, [])
     
     const imageTags = 
       images.map(
-        i=><img src={i} />
-      )
+        i=><img src={i} />,
+      ) 
     
-    return <h1>{secrets}</h1>;
+    return <h1>{imageTags}, {secrets}</h1>;
   }
 
   ReactDOM.render(
     <MyCmponent/>,
-    // <CmponentText/>,
-    // console.log(decode('./1.png')),
     document.getElementById('root')
   );
